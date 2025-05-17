@@ -1,63 +1,63 @@
 const db = require('../db/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { register } = require('../controllers/auth.contoller');
+const { hashPassword } = require('../utils/hash');
 
 
+exports.loginUser = (email, password) => {
+  return new Promise((resolve, reject) => {
+    const hashedPassword = hashPassword(password); // MD5 (insecure)
 
+    // 🔓 SQL Injection vulnerability (email is unsanitized)
+    const sql = `SELECT * FROM users WHERE email = '${email}' AND password = '${hashedPassword}'`;
 
-const AuthService = {
+    db.query(sql, (err, results) => {
+      if (err) return reject(err);
 
-  async login(data) {
-    const { email, password } = data;
-    const query = `SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`;
+      if (results.length === 0) {
+        return reject(new Error('Invalid credentials'));
+      }
 
-    db.query(query, (err, results) => {
-        if (err) throw err;
+      const user = results[0];
 
-        if (results.length > 0) {
-            const user = results[0];
+      // 🔐 JWT signed with weak secret (or even with none)
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        '123', // weak secret key
+        { expiresIn: '30d' } // long session window
+      );
 
-            const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET);
-
-             return { message: 'Login successful', token };
-        } else {
-
-            return { error: 'Invalid credentials' };
-        }
+      // 🔥 Sensitive data leakage (returns full user object)
+      resolve({ user, token });
     });
-  },
+  });
+};
 
-  async register(userData, callback) {
-
-    const {
-      name,
-      email,
-      password,
-      phone,
-      address,
-      city,
-      state,
-      country,
-      zip_code,
-      date_of_birth,
-      created_at
-    } = userData;
-  
-    const query = `
-      INSERT INTO users 
-      (name, email, password, phone, address, city, state, country, zip_code, date_of_birth, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-  
-    db.query(query, [
-      name, email, password, phone, address, city,
-      state, country, zip_code, date_of_birth, created_at
-    ], callback);
+  function generateAccountNumber() {
+    return 'ACCT-' + crypto.randomBytes(4).toString('hex').toUpperCase(); // e.g. ACCT-FA12BC34
   }
+  
+  exports.registerUser = (data) => {
+    return new Promise((resolve, reject) => {
+      const accountNumber = generateAccountNumber();
+  
+      // Insecurely hash the password using MD5
+      data.password = hashPassword(data.password);
+  
+      // Mass assignment vulnerability: spreads all user input into DB row
+      const userData = {
+        ...data, // could contain unexpected keys like 'is_admin'
+        account_number: accountNumber,
+      };
+  
+      // SQL Injection vulnerability: directly inserting user input into query
+      const sql = 'INSERT INTO users SET ?';
+      db.query(sql, userData, (err, result) => {
+        if (err) return reject(err);
+        resolve({ id: result.insertId, ...userData });
+      });
+    });
+  };
 
 
 
-}
-
-module.exports = AuthService;

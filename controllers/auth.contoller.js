@@ -1,23 +1,14 @@
 const AuthService = require('../services/auth.service');
 
 
-exports.register = async (req, res)=> {
-    try {
-      const userData = req.body;
-
-      await AuthService.register(userData, (err, result) => {
-        if (err) {
-          console.error('Error during registration:', err);
-          return res.status(500).json({ error: 'Registration failed' });
-        }
-    
-        res.json({ message: 'User registered', data: userData });
-      });
-
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
+exports.register = async (req, res, next) => {
+  try {
+    const user = await AuthService.registerUser(req.body);
+    res.status(201).json({ message: "User registered", user });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.login = async (req, res) => {
     try {

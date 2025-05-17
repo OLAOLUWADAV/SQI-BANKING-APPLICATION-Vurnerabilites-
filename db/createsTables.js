@@ -16,6 +16,10 @@ function createTables() {
       country VARCHAR(100),
       zip_code VARCHAR(10),
       date_of_birth DATE,
+      account_Number VARCHAR(20) UNIQUE,
+      account_balance DECIMAL(10, 2) DEFAULT 2000.00,
+      account_type ENUM('savings', 'current') DEFAULT 'savings',
+      is_admin BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `;
@@ -45,6 +49,43 @@ function createTables() {
       console.log('Transactions table ready.');
     }
   });
+
+  const transfersTable = `
+  CREATE TABLE IF NOT EXISTS transfers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    transfer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+    )
+    `;
+    
+    db.query(transfersTable, (err, results) => {
+      if (err) {
+        console.error('Error creating transfers table:', err);
+      } else {
+        console.log('Transfers table ready.');
+      }
+    });
+    const transactionsHistoryTable = `
+      CREATE TABLE IF NOT EXISTS transactions_history (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT  NOT NULL,
+        transaction_id INT NOT NULL,
+        transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        FOREIGN KEY (transaction_id) REFERENCES transactions(id)
+      )
+    `;
+    db.query(transactionsHistoryTable, (err, results) => {
+      if (err) {
+        console.error('Error creating transactions history table:', err);
+      } else {
+        console.log('Transactions history table ready.');
+      }
+    });
   const notificationsTable = `
   CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -63,7 +104,7 @@ function createTables() {
     }
   });
   const billsTable = `
-    CREATE TABLE IF NOT EXISTS bills (
+  CREATE TABLE IF NOT EXISTS bills (
       id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT NOT NULL,
       bill_type VARCHAR(100) NOT NULL,
@@ -72,11 +113,11 @@ function createTables() {
       status ENUM('paid', 'unpaid') DEFAULT 'unpaid',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
-    )
-  `;
-  db.query(billsTable, (err, results) => {
-    if (err) {
-      console.error('Error creating bills table:', err);
+      )
+      `;
+      db.query(billsTable, (err, results) => {
+        if (err) {
+          console.error('Error creating bills table:', err);
     } else {
       console.log('Bills table ready.');
     }
@@ -101,42 +142,6 @@ function createTables() {
       console.log('Loans table ready.');
     }
   });
-  const transfersTable = `
-    CREATE TABLE IF NOT EXISTS transfers (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      sender_id INT NOT NULL,
-      receiver_id INT NOT NULL,
-      amount DECIMAL(10, 2) NOT NULL,
-      transfer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (sender_id) REFERENCES users(id),
-      FOREIGN KEY (receiver_id) REFERENCES users(id)
-    )
-  `;
-  db.query(transfersTable, (err, results) => {
-    if (err) {
-      console.error('Error creating transfers table:', err);
-    } else {
-      console.log('Transfers table ready.');
-    }
-  });
-  const transactionsHistoryTable = `
-    CREATE TABLE IF NOT EXISTS transactions_history (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT  NOT NULL,
-      transaction_id INT NOT NULL,
-      transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (transaction_id) REFERENCES transactions(id)
-    )
-  `;
-  db.query(transactionsHistoryTable, (err, results) => {
-    if (err) {
-      console.error('Error creating transactions history table:', err);
-    } else {
-      console.log('Transactions history table ready.');
-    }
-  });
-
 
 }
 
