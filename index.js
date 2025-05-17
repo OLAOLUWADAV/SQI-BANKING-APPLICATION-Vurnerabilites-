@@ -12,7 +12,14 @@ require('dotenv').config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/auth', AuthRoutes);
+
+app.use('/api/auth', AuthRoutes);
+// app.use("/api/users")
+// app.use("/api/transfers")
+// app.use("/api/transactionsHistory")
+// app.use("/api/Bills/payment")
+// app.use("/api/loans")
+// app.use("/api/notifications")
 // app.use('/users', userRoutes);
 
 
@@ -22,4 +29,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-z
