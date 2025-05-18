@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const transferController = require('../controllers/transfer.controllers');
 
-router.post("/transfer", )
-router.get("/transfer/history", )
-router.get("/transfer/:id", )
+// 🚨 Public endpoint – no auth, no validation
+router.post('/transfer', transferController.transfer);
 
-
-exports = router;
+module.exports = router;
