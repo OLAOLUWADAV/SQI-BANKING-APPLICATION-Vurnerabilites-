@@ -54,6 +54,11 @@ export const authAPI = {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
+    
+  logout: () => {
+    localStorage.removeItem('token');
+    return Promise.resolve({ success: true });
+  }
 };
 
 // Transfer related API calls
@@ -82,10 +87,104 @@ export const userAPI = {
       method: 'PUT',
       body: JSON.stringify(userData),
     }),
+    
+  requestAccountUpgrade: (accountType: string) =>
+    fetchWithAuth('/users/upgrade-request', {
+      method: 'POST',
+      body: JSON.stringify({ accountType }),
+    }),
 };
 
 // Transaction related API calls
 export const transactionAPI = {
   getTransactions: (limit = 10) => 
     fetchWithAuth(`/transactions?limit=${limit}`),
+    
+  getTransactionDetails: (transactionId: string) =>
+    fetchWithAuth(`/transactions/${transactionId}`),
+};
+
+// Bill Payment related API calls
+export const billPaymentAPI = {
+  payBill: (billData: {
+    billType: string;
+    provider: string;
+    accountNumber: string;
+    amount: number;
+  }) =>
+    fetchWithAuth('/bills/pay', {
+      method: 'POST',
+      body: JSON.stringify(billData),
+    }),
+    
+  getBillHistory: () => fetchWithAuth('/bills/history'),
+  
+  getProviders: (billType: string) =>
+    fetchWithAuth(`/bills/providers?type=${billType}`),
+};
+
+// Statement related API calls
+export const statementAPI = {
+  generateStatement: (statementData: {
+    type: string;
+    period: string;
+  }) =>
+    fetchWithAuth('/statements/generate', {
+      method: 'POST',
+      body: JSON.stringify(statementData),
+    }),
+    
+  getStatementHistory: () => fetchWithAuth('/statements/history'),
+  
+  downloadStatement: (statementId: string) =>
+    fetchWithAuth(`/statements/${statementId}/download`),
+    
+  emailStatement: (statementId: string, email?: string) =>
+    fetchWithAuth(`/statements/${statementId}/email`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+};
+
+// Notification related API calls
+export const notificationAPI = {
+  getNotifications: () => fetchWithAuth('/notifications'),
+  
+  markAsRead: (notificationId: string) =>
+    fetchWithAuth(`/notifications/${notificationId}/read`, {
+      method: 'PUT',
+    }),
+    
+  markAllAsRead: () =>
+    fetchWithAuth('/notifications/read-all', {
+      method: 'PUT',
+    }),
+};
+
+// Rewards related API calls
+export const rewardsAPI = {
+  getRewardsBalance: () => fetchWithAuth('/rewards/balance'),
+  
+  getAvailableRewards: () => fetchWithAuth('/rewards/available'),
+  
+  redeemReward: (rewardId: string) =>
+    fetchWithAuth(`/rewards/redeem`, {
+      method: 'POST',
+      body: JSON.stringify({ rewardId }),
+    }),
+    
+  getRedemptionHistory: () => fetchWithAuth('/rewards/history'),
+};
+
+// Referral related API calls
+export const referralAPI = {
+  getReferralCode: () => fetchWithAuth('/referrals/code'),
+  
+  getReferralHistory: () => fetchWithAuth('/referrals/history'),
+  
+  sendReferralEmail: (email: string) =>
+    fetchWithAuth('/referrals/send-email', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
 };

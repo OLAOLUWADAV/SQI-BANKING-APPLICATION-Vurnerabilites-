@@ -3,8 +3,24 @@ import { ReactNode, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Wallet, List } from 'lucide-react';
+import { 
+  LogOut, 
+  Wallet, 
+  List, 
+  Bell, 
+  User, 
+  Award, 
+  FileText, 
+  Receipt, 
+  HelpCircle, 
+  History,
+  ArrowUpRight,
+  CreditCard,
+  Phone,
+  Info
+} from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -15,11 +31,22 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(3); // For demonstration purposes
 
-  const navigation = [
+  const mainNavigation = [
     { name: 'Dashboard', path: '/dashboard', icon: <Wallet className="w-5 h-5" /> },
     { name: 'Transfer', path: '/transfer', icon: <LogOut className="w-5 h-5" /> },
-    { name: 'Transactions', path: '/transactions', icon: <List className="w-5 h-5" /> },
+    { name: 'Transactions', path: '/transactions', icon: <History className="w-5 h-5" /> },
+    { name: 'Bill Payment', path: '/bill-payment', icon: <CreditCard className="w-5 h-5" /> },
+    { name: 'Rewards', path: '/rewards', icon: <Award className="w-5 h-5" /> },
+  ];
+
+  const secondaryNavigation = [
+    { name: 'Profile', path: '/profile', icon: <User className="w-5 h-5" /> },
+    { name: 'Request Statement', path: '/statement', icon: <FileText className="w-5 h-5" /> },
+    { name: 'Refer and Earn', path: '/refer', icon: <ArrowUpRight className="w-5 h-5" /> },
+    { name: 'About', path: '/about', icon: <Info className="w-5 h-5" /> },
+    { name: 'Assistance', path: '/assistance', icon: <Phone className="w-5 h-5" /> },
   ];
 
   const handleLogout = () => {
@@ -52,8 +79,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-4">
-              {navigation.map((item) => (
+            <nav className="hidden md:flex items-center space-x-2">
+              {mainNavigation.slice(0, 3).map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
@@ -67,16 +94,29 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Notification Icon with Badge */}
+              <Link 
+                to="/notifications" 
+                className="relative px-3 py-2 rounded-md text-gray-600 hover:text-bank-primary hover:bg-gray-50"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadNotifications > 0 && (
+                  <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-red-500 text-[10px]">
+                    {unreadNotifications}
+                  </Badge>
+                )}
+              </Link>
             </nav>
 
             {/* User Menu */}
             <div className="hidden md:flex items-center">
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium">{user?.name}</span>
-                  <span className="text-xs text-gray-500">{user?.email}</span>
+                  <span className="text-sm font-medium">{user?.name || "User"}</span>
+                  <span className="text-xs text-gray-500">{user?.email || "user@example.com"}</span>
                 </div>
-                <Avatar className="h-10 w-10 bg-bank-secondary text-white">
+                <Avatar className="h-10 w-10 bg-bank-secondary text-white cursor-pointer" onClick={() => navigate('/profile')}>
                   <AvatarFallback>{user?.name ? getInitials(user.name) : "U"}</AvatarFallback>
                 </Avatar>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -88,6 +128,19 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
             {/* Mobile menu button */}
             <div className="flex items-center md:hidden">
+              {/* Notification Icon for Mobile */}
+              <Link 
+                to="/notifications" 
+                className="relative px-3 py-2 mr-2 rounded-md text-gray-600"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadNotifications > 0 && (
+                  <Badge className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-red-500 text-[10px]">
+                    {unreadNotifications}
+                  </Badge>
+                )}
+              </Link>
+              
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-600"
@@ -115,7 +168,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t">
             <div className="pt-2 pb-3 space-y-1">
-              {navigation.map((item) => (
+              {mainNavigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.path}
@@ -132,6 +185,35 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   </div>
                 </Link>
               ))}
+              
+              <div className="border-t mt-2 pt-2">
+                {secondaryNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`block px-3 py-2 text-base font-medium ${
+                      location.pathname === item.path
+                        ? 'text-bank-primary bg-bank-light'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className="flex items-center">
+                      <span className="mr-2">{item.icon}</span>
+                      {item.name}
+                    </div>
+                  </Link>
+                ))}
+                
+                <div className="mt-2 pt-2 border-t">
+                  <Link to="/terms" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>
+                    Terms of Service
+                  </Link>
+                  <Link to="/privacy" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>
+                    Privacy Policy
+                  </Link>
+                </div>
+              </div>
             </div>
             <div className="pt-4 pb-3 border-t border-gray-200">
               <div className="flex items-center px-3">
@@ -139,8 +221,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   <AvatarFallback>{user?.name ? getInitials(user.name) : "U"}</AvatarFallback>
                 </Avatar>
                 <div className="ml-3">
-                  <div className="text-base font-medium">{user?.name}</div>
-                  <div className="text-sm font-medium text-gray-500">{user?.email}</div>
+                  <div className="text-base font-medium">{user?.name || "User"}</div>
+                  <div className="text-sm font-medium text-gray-500">{user?.email || "user@example.com"}</div>
                 </div>
               </div>
               <div className="mt-3 space-y-1">
@@ -167,8 +249,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
       {/* Footer */}
       <footer className="bg-white border-t py-4">
-        <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} SwiftBank. All rights reserved.</p>
+        <div className="container mx-auto px-4 text-sm text-gray-500">
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/about" className="hover:text-bank-primary">About</Link>
+            <Link to="/terms" className="hover:text-bank-primary">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-bank-primary">Privacy Policy</Link>
+            <Link to="/assistance" className="hover:text-bank-primary">Help & Support</Link>
+          </div>
+          <p className="text-center mt-2">&copy; {new Date().getFullYear()} SwiftBank. All rights reserved.</p>
         </div>
       </footer>
     </div>
