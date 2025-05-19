@@ -23,7 +23,20 @@ jobs:
 
       - name: Run Postman Collection Tests
         run: |
-          newman run postman/SQI-BANKING-APPLICATION-Vurnerabilites.postman_collection.json \
-            --environment postman/SQI-BANKING-APPLICATION-Vurnerabilites.postman_environment.json \
-            --reporters cli,junit \
-            --reporter-junit-export newman-results.xml
+          # Define the paths (corrected spelling of 'Vulnerabilities')
+          COLLECTION="postman/SQI-BANKING-APPLICATION-Vulnerabilities.postman_collection.json"
+          ENV_FILE="postman/SQI-BANKING-APPLICATION-Vulnerabilities.postman_environment.json"
+
+          # Run Newman with environment if available
+          if [ -f "$ENV_FILE" ]; then
+            echo "Using environment file: $ENV_FILE"
+            newman run "$COLLECTION" \
+              --environment "$ENV_FILE" \
+              --reporters cli,junit \
+              --reporter-junit-export newman-results.xml
+          else
+            echo "Environment file not found at $ENV_FILE, running without environment."
+            newman run "$COLLECTION" \
+              --reporters cli,junit \
+              --reporter-junit-export newman-results.xml
+          fi
