@@ -1,17 +1,14 @@
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 
 const Index = () => {
-  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading) {
-      navigate(isAuthenticated ? '/dashboard' : '/login');
-    }
-  }, [isAuthenticated, isLoading, navigate]);
+    // Simply navigate to dashboard without authentication check
+    navigate('/dashboard');
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
