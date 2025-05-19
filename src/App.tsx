@@ -13,17 +13,10 @@ import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "@/pages/Index";
 
-// New pages
+// Remaining pages
 import ProfilePage from "@/pages/ProfilePage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import BillPaymentPage from "@/pages/BillPaymentPage";
-import RewardsPage from "@/pages/RewardsPage";
-import ReferPage from "@/pages/ReferPage";
-import StatementPage from "@/pages/StatementPage";
-import AboutPage from "@/pages/AboutPage";
-import TermsPage from "@/pages/TermsPage";
-import PrivacyPage from "@/pages/PrivacyPage";
-import AssistancePage from "@/pages/AssistancePage";
 
 const queryClient = new QueryClient();
 
@@ -46,17 +39,10 @@ const App = () => (
             <Route path="/transfer" element={<TransferPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             
-            {/* New pages */}
+            {/* Remaining pages */}
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/bill-payment" element={<BillPaymentPage />} />
-            <Route path="/rewards" element={<RewardsPage />} />
-            <Route path="/refer" element={<ReferPage />} />
-            <Route path="/statement" element={<StatementPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/assistance" element={<AssistancePage />} />
             
             {/* Catch all */}
             <Route path="*" element={<NotFound />} />

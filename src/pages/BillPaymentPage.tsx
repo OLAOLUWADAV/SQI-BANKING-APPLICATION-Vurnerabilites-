@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import AppLayout from '@/components/AppLayout';
 import { toast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CreditCard, Phone, Radio, Tv, Zap } from 'lucide-react';
+import { Phone, Radio } from 'lucide-react';
 
 const BillPaymentPage = () => {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ const BillPaymentPage = () => {
         <h1 className="text-2xl font-bold mb-6">Bill Payment</h1>
         
         <Tabs defaultValue="airtime" className="w-full">
-          <TabsList className="grid grid-cols-5 mb-8">
+          <TabsList className="grid grid-cols-2 mb-8">
             <TabsTrigger value="airtime" className="flex flex-col items-center py-3">
               <Phone className="mb-1 h-5 w-5" />
               <span>Airtime</span>
@@ -52,18 +53,6 @@ const BillPaymentPage = () => {
             <TabsTrigger value="data" className="flex flex-col items-center py-3">
               <Radio className="mb-1 h-5 w-5" />
               <span>Data</span>
-            </TabsTrigger>
-            <TabsTrigger value="electricity" className="flex flex-col items-center py-3">
-              <Zap className="mb-1 h-5 w-5" />
-              <span>Electricity</span>
-            </TabsTrigger>
-            <TabsTrigger value="tv" className="flex flex-col items-center py-3">
-              <Tv className="mb-1 h-5 w-5" />
-              <span>TV</span>
-            </TabsTrigger>
-            <TabsTrigger value="others" className="flex flex-col items-center py-3">
-              <CreditCard className="mb-1 h-5 w-5" />
-              <span>Others</span>
             </TabsTrigger>
           </TabsList>
           
@@ -149,51 +138,6 @@ const BillPaymentPage = () => {
               <CardHeader>
                 <CardTitle className="text-xl">Buy Data</CardTitle>
                 <CardDescription>Purchase data bundles for any network</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8">
-                  This feature will be available soon.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Electricity Tab */}
-          <TabsContent value="electricity">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Pay Electricity Bills</CardTitle>
-                <CardDescription>Pay for electricity services</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8">
-                  This feature will be available soon.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* TV Tab */}
-          <TabsContent value="tv">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">TV Subscriptions</CardTitle>
-                <CardDescription>Pay for TV services</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center py-8">
-                  This feature will be available soon.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Others Tab */}
-          <TabsContent value="others">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl">Other Bills</CardTitle>
-                <CardDescription>Pay other types of bills</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-center py-8">

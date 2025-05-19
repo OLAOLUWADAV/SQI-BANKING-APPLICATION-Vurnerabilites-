@@ -9,15 +9,10 @@ import {
   List, 
   Bell, 
   User, 
-  Award, 
-  FileText, 
-  Receipt, 
-  HelpCircle, 
   History,
   ArrowUpRight,
   CreditCard,
-  Phone,
-  Info
+  Phone
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -38,15 +33,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     { name: 'Transfer', path: '/transfer', icon: <LogOut className="w-5 h-5" /> },
     { name: 'Transactions', path: '/transactions', icon: <History className="w-5 h-5" /> },
     { name: 'Bill Payment', path: '/bill-payment', icon: <CreditCard className="w-5 h-5" /> },
-    { name: 'Rewards', path: '/rewards', icon: <Award className="w-5 h-5" /> },
   ];
 
   const secondaryNavigation = [
     { name: 'Profile', path: '/profile', icon: <User className="w-5 h-5" /> },
-    { name: 'Request Statement', path: '/statement', icon: <FileText className="w-5 h-5" /> },
-    { name: 'Refer and Earn', path: '/refer', icon: <ArrowUpRight className="w-5 h-5" /> },
-    { name: 'About', path: '/about', icon: <Info className="w-5 h-5" /> },
-    { name: 'Assistance', path: '/assistance', icon: <Phone className="w-5 h-5" /> },
   ];
 
   const handleLogout = () => {
@@ -72,8 +62,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               {/* Logo/Brand */}
               <div className="flex-shrink-0 flex items-center">
                 <Link to="/dashboard" className="flex items-center">
-                  <div className="h-10 w-10 rounded-full bg-bank-primary flex items-center justify-center text-white font-bold text-lg">SB</div>
-                  <span className="ml-2 text-xl font-bold text-bank-primary">SwiftBank</span>
+                  <div className="h-10 w-10 rounded-full bg-bank-primary flex items-center justify-center text-white font-bold text-lg">SQ</div>
+                  <span className="ml-2 text-xl font-bold text-bank-primary">Sqi Bank</span>
                 </Link>
               </div>
             </div>
@@ -204,15 +194,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                     </div>
                   </Link>
                 ))}
-                
-                <div className="mt-2 pt-2 border-t">
-                  <Link to="/terms" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>
-                    Terms of Service
-                  </Link>
-                  <Link to="/privacy" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50" onClick={() => setIsMobileMenuOpen(false)}>
-                    Privacy Policy
-                  </Link>
-                </div>
               </div>
             </div>
             <div className="pt-4 pb-3 border-t border-gray-200">
@@ -250,13 +231,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Footer */}
       <footer className="bg-white border-t py-4">
         <div className="container mx-auto px-4 text-sm text-gray-500">
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/about" className="hover:text-bank-primary">About</Link>
-            <Link to="/terms" className="hover:text-bank-primary">Terms of Service</Link>
-            <Link to="/privacy" className="hover:text-bank-primary">Privacy Policy</Link>
-            <Link to="/assistance" className="hover:text-bank-primary">Help & Support</Link>
-          </div>
-          <p className="text-center mt-2">&copy; {new Date().getFullYear()} SwiftBank. All rights reserved.</p>
+          <p className="text-center">&copy; {new Date().getFullYear()} Sqi Bank. All rights reserved.</p>
         </div>
       </footer>
     </div>

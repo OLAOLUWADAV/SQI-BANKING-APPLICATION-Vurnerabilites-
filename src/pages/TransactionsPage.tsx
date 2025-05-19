@@ -4,6 +4,9 @@ import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { transactionAPI } from '@/services/api';
 import AppLayout from '@/components/AppLayout';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface Transaction {
   id: number;
@@ -19,6 +22,7 @@ const TransactionsPage = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -108,10 +112,78 @@ const TransactionsPage = () => {
     });
   };
 
+  // Download transactions as CSV
+  const downloadTransactions = () => {
+    setIsDownloading(true);
+    
+    try {
+      // Create CSV content
+      let csvContent = "Date,Description,Type,Amount\n";
+      
+      transactions.forEach(transaction => {
+        const date = formatDate(transaction.transaction_date);
+        const description = transaction.transaction_type === 'credit' 
+          ? `From: ${transaction.sender_name || 'Unknown'}`
+          : `To: ${transaction.receiver_name || 'Unknown'}`;
+        const type = transaction.transaction_type === 'credit' ? 'Credit' : 'Debit';
+        const amount = formatCurrency(transaction.amount);
+        
+        csvContent += `${date},"${description}",${type},${amount}\n`;
+      });
+      
+      // Create a blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `transaction_history_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Download Complete",
+        description: "Your transaction history has been downloaded.",
+      });
+    } catch (error) {
+      console.error('Failed to download transactions:', error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "Failed to download transaction history.",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-2xl font-bold mb-6">Transaction History</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Transaction History</h1>
+          <Button 
+            variant="outline" 
+            onClick={downloadTransactions} 
+            disabled={isLoading || isDownloading || transactions.length === 0}
+            className="flex items-center"
+          >
+            {isDownloading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+                Downloading...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Download History
+              </>
+            )}
+          </Button>
+        </div>
         
         <Card className="shadow-md">
           <CardHeader>
