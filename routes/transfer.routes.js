@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
-
-router.post("/transfer", )
-router.get("/transfer/history", )
-router.get("/transfer/:id", )
+const transferController = require('../controllers/transfer.controllers');
+const authMiddleWare = require('../middlewares/auth.middleware');
 
 
-exports = router;
+// 🚨 Public endpoint – no auth, no validation
+router.post('/transfer', 
+    authMiddleWare
+    ,transferController.transfer);
+
+module.exports = router;
